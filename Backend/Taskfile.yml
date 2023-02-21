@@ -1,0 +1,45 @@
+version: '3'
+
+env:
+  DB_URL: 'postgresql://root:secret@localhost:5432/control_gastos?sslmode=disable'
+
+tasks:
+  postgres:
+    desc: Build a postgrest 14 container
+    cmds:
+    - docker run --name control_gastos -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:14-alpine
+
+  createdb:
+    desc: Create db control_gastos on a postgres instance
+    cmds:
+    - docker exec -it control_gastos createdb --username=root --owner=root control_gastos
+
+  dropdb:
+    desc: Drop control_gastos db on a postgres instance
+    cmds:
+    - docker exec -it control_gastos dropdb control_gastos
+
+  migrateup:
+    desc: Run the migrations up
+    cmds:
+    - migrate -path internal/db/migration -database $DB_URL -verbose up
+
+  migratedown:
+    desc: Run the migrations down
+    cmds:
+    - migrate -path internal/db/migration -database $DB_URL -verbose down
+
+  sqlc:
+    desc: generate sqlc code
+    cmds:
+    - sqlc generate
+
+  test:
+    desc: run the test
+    cmds:
+    - go test -v -cover ./...
+  
+  server:
+    desc: init the server
+    cmds:
+    - go run cmd/api/main.go

@@ -30,9 +30,9 @@ INSERT INTO "Entry" (
 `
 
 type CreateEntryParams struct {
-	UserID        uuid.NullUUID  `json:"user_id"`
+	UserID        uuid.UUID      `json:"user_id"`
 	GroupID       uuid.NullUUID  `json:"group_id"`
-	TypeID        uuid.NullUUID  `json:"type_id"`
+	TypeID        uuid.UUID      `json:"type_id"`
 	Name          string         `json:"name"`
 	UseDay        time.Time      `json:"use_day"`
 	Amount        float64        `json:"amount"`
@@ -100,7 +100,7 @@ LIMIT 1
 
 type GetEntryRow struct {
 	ID            uuid.UUID      `json:"id"`
-	UserID        uuid.NullUUID  `json:"user_id"`
+	UserID        uuid.UUID      `json:"user_id"`
 	GroupID       uuid.NullUUID  `json:"group_id"`
 	UseDay        time.Time      `json:"use_day"`
 	Name          string         `json:"name"`
@@ -147,7 +147,7 @@ WHERE en.group_id = $1
 
 type ListEntryByGroupRow struct {
 	ID            uuid.UUID      `json:"id"`
-	UserID        uuid.NullUUID  `json:"user_id"`
+	UserID        uuid.UUID      `json:"user_id"`
 	GroupID       uuid.NullUUID  `json:"group_id"`
 	UseDay        time.Time      `json:"use_day"`
 	Name          string         `json:"name"`
@@ -210,7 +210,7 @@ WHERE en.user_id = $1
 
 type ListEntryByUserRow struct {
 	ID            uuid.UUID      `json:"id"`
-	UserID        uuid.NullUUID  `json:"user_id"`
+	UserID        uuid.UUID      `json:"user_id"`
 	GroupID       uuid.NullUUID  `json:"group_id"`
 	UseDay        time.Time      `json:"use_day"`
 	Name          string         `json:"name"`
@@ -221,7 +221,7 @@ type ListEntryByUserRow struct {
 	Place         string         `json:"place"`
 }
 
-func (q *Queries) ListEntryByUser(ctx context.Context, userID uuid.NullUUID) ([]ListEntryByUserRow, error) {
+func (q *Queries) ListEntryByUser(ctx context.Context, userID uuid.UUID) ([]ListEntryByUserRow, error) {
 	rows, err := q.db.QueryContext(ctx, listEntryByUser, userID)
 	if err != nil {
 		return nil, err
@@ -258,23 +258,21 @@ func (q *Queries) ListEntryByUser(ctx context.Context, userID uuid.NullUUID) ([]
 const updateEntry = `-- name: UpdateEntry :one
 UPDATE "Entry"
 SET
-  user_id = COALESCE($1, user_id),
   updated_at = NOW(),
-  group_id = COALESCE($2, group_id),
-  type_id = COALESCE($3, type_id),
-  name = COALESCE($4, name),
-  use_day = COALESCE($5, use_day),
-  amount = COALESCE($6, amount),
-  cost = COALESCE($7, cost),
-  cost_indicator = COALESCE($8, cost_indicator),
-  place = COALESCE($9, place)
+  group_id = COALESCE($1, group_id),
+  type_id = COALESCE($2, type_id),
+  name = COALESCE($3, name),
+  use_day = COALESCE($4, use_day),
+  amount = COALESCE($5, amount),
+  cost = COALESCE($6, cost),
+  cost_indicator = COALESCE($7, cost_indicator),
+  place = COALESCE($8, place)
 WHERE
-  id = $10
+  id = $9
 RETURNING id, user_id, group_id, type_id, name, use_day, amount, cost, cost_indicator, place, created_at, updated_at
 `
 
 type UpdateEntryParams struct {
-	UserID        uuid.NullUUID   `json:"user_id"`
 	GroupID       uuid.NullUUID   `json:"group_id"`
 	TypeID        uuid.NullUUID   `json:"type_id"`
 	Name          sql.NullString  `json:"name"`
@@ -288,7 +286,6 @@ type UpdateEntryParams struct {
 
 func (q *Queries) UpdateEntry(ctx context.Context, arg UpdateEntryParams) (Entry, error) {
 	row := q.db.QueryRowContext(ctx, updateEntry,
-		arg.UserID,
 		arg.GroupID,
 		arg.TypeID,
 		arg.Name,

@@ -13,9 +13,9 @@ import (
 
 type Entry struct {
 	ID            uuid.UUID      `json:"id"`
-	UserID        uuid.NullUUID  `json:"user_id"`
+	UserID        uuid.UUID      `json:"user_id"`
 	GroupID       uuid.NullUUID  `json:"group_id"`
-	TypeID        uuid.NullUUID  `json:"type_id"`
+	TypeID        uuid.UUID      `json:"type_id"`
 	Name          string         `json:"name"`
 	UseDay        time.Time      `json:"use_day"`
 	Amount        float64        `json:"amount"`
@@ -27,11 +27,22 @@ type Entry struct {
 }
 
 type Group struct {
-	ID        uuid.UUID     `json:"id"`
-	UserID    uuid.NullUUID `json:"user_id"`
-	Name      string        `json:"name"`
-	CreatedAt time.Time     `json:"created_at"`
-	UpdatedAt time.Time     `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"user_id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type Session struct {
+	ID           uuid.UUID `json:"id"`
+	Username     string    `json:"username"`
+	RefreshToken string    `json:"refresh_token"`
+	UserAgent    string    `json:"user_agent"`
+	ClientIp     string    `json:"client_ip"`
+	IsBlocked    bool      `json:"is_blocked"`
+	ExpiresAt    time.Time `json:"expires_at"`
+	CreatedAt    time.Time `json:"created_at"`
 }
 
 type Type struct {

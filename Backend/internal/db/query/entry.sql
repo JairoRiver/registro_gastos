@@ -66,7 +66,6 @@ WHERE id = $1;
 -- name: UpdateEntry :one
 UPDATE "Entry"
 SET
-  user_id = COALESCE(sqlc.narg(user_id), user_id),
   updated_at = NOW(),
   group_id = COALESCE(sqlc.narg(group_id), group_id),
   type_id = COALESCE(sqlc.narg(type_id), type_id),

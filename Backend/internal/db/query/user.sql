@@ -5,7 +5,7 @@ INSERT INTO "Users" (
   password
 ) VALUES (
   $1, $2, $3
-) RETURNING username, email, created_at;
+) RETURNING *;
 
 -- name: GetUser :one
 SELECT *
@@ -32,7 +32,7 @@ OFFSET $2;
 
 -- name: DeleteUser :exec
 DELETE FROM "Users"
-WHERE id = $1;
+WHERE id = $1 CASCADE;
 
 -- name: UpdateUser :one
 UPDATE "Users"
@@ -43,4 +43,4 @@ SET
   email = COALESCE(sqlc.narg(email), email)
 WHERE
   id = sqlc.arg(id)
-RETURNING id, username;
+RETURNING id, username, updated_at;

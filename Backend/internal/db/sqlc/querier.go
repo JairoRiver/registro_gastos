@@ -13,8 +13,9 @@ import (
 type Querier interface {
 	CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry, error)
 	CreateGroup(ctx context.Context, arg CreateGroupParams) (Group, error)
+	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateType(ctx context.Context, name string) (Type, error)
-	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	CreateUserGroup(ctx context.Context, arg CreateUserGroupParams) (UserGroup, error)
 	DeleteEntry(ctx context.Context, id uuid.UUID) error
 	DeleteGroup(ctx context.Context, id uuid.UUID) error
@@ -23,7 +24,7 @@ type Querier interface {
 	DeleteUserGroup(ctx context.Context, id uuid.UUID) error
 	GetEntry(ctx context.Context, id uuid.UUID) (GetEntryRow, error)
 	GetGroup(ctx context.Context, id uuid.UUID) (Group, error)
-	GetGroupByUser(ctx context.Context, userID uuid.NullUUID) (Group, error)
+	GetSession(ctx context.Context, id uuid.UUID) (Session, error)
 	GetType(ctx context.Context, id uuid.UUID) (Type, error)
 	GetUser(ctx context.Context, id uuid.UUID) (User, error)
 	GetUserByUsername(ctx context.Context, username string) (GetUserByUsernameRow, error)
@@ -31,8 +32,8 @@ type Querier interface {
 	GetUserGroupByGroup(ctx context.Context, groupID uuid.NullUUID) (UserGroup, error)
 	GetUserGroupByUser(ctx context.Context, userID uuid.NullUUID) (UserGroup, error)
 	ListEntryByGroup(ctx context.Context, groupID uuid.NullUUID) ([]ListEntryByGroupRow, error)
-	ListEntryByUser(ctx context.Context, userID uuid.NullUUID) ([]ListEntryByUserRow, error)
-	ListGroups(ctx context.Context, arg ListGroupsParams) ([]Group, error)
+	ListEntryByUser(ctx context.Context, userID uuid.UUID) ([]ListEntryByUserRow, error)
+	ListGroupsByUser(ctx context.Context, userID uuid.UUID) ([]Group, error)
 	ListTypes(ctx context.Context) ([]Type, error)
 	ListUserGroups(ctx context.Context, arg ListUserGroupsParams) ([]UserGroup, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]ListUsersRow, error)

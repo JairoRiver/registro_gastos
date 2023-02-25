@@ -2,7 +2,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE "Users" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "username" varchar NOT NULL,
+  "username" varchar UNIQUE NOT NULL,
   "email" varchar UNIQUE NOT NULL,
   "password" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
@@ -11,7 +11,7 @@ CREATE TABLE "Users" (
 
 CREATE TABLE "Groups" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "user_id" uuid,
+  "user_id" uuid NOT NULL,
   "name" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now())
@@ -27,9 +27,9 @@ CREATE TABLE "user_group" (
 
 CREATE TABLE "Entry" (
   "id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
-  "user_id" uuid,
+  "user_id" uuid NOT NULL,
   "group_id" uuid,
-  "type_id" uuid,
+  "type_id" uuid NOT NULL,
   "name" varchar NOT NULL,
   "use_day" date NOT NULL,
   "amount" float NOT NULL,

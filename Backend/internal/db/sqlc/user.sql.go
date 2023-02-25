@@ -20,7 +20,7 @@ INSERT INTO "Users" (
   password
 ) VALUES (
   $1, $2, $3
-) RETURNING username, email, created_at
+) RETURNING id, username, email, password, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -29,16 +29,17 @@ type CreateUserParams struct {
 	Password string `json:"password"`
 }
 
-type CreateUserRow struct {
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser, arg.Username, arg.Email, arg.Password)
-	var i CreateUserRow
-	err := row.Scan(&i.Username, &i.Email, &i.CreatedAt)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Password,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
 	return i, err
 }
 
@@ -156,7 +157,7 @@ SET
   email = COALESCE($3, email)
 WHERE
   id = $4
-RETURNING id, username
+RETURNING id, username, updated_at
 `
 
 type UpdateUserParams struct {
@@ -167,8 +168,9 @@ type UpdateUserParams struct {
 }
 
 type UpdateUserRow struct {
-	ID       uuid.UUID `json:"id"`
-	Username string    `json:"username"`
+	ID        uuid.UUID `json:"id"`
+	Username  string    `json:"username"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
@@ -179,6 +181,6 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateU
 		arg.ID,
 	)
 	var i UpdateUserRow
-	err := row.Scan(&i.ID, &i.Username)
+	err := row.Scan(&i.ID, &i.Username, &i.UpdatedAt)
 	return i, err
 }

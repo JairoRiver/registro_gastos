@@ -22,8 +22,8 @@ INSERT INTO "Groups" (
 `
 
 type CreateGroupParams struct {
-	UserID uuid.NullUUID `json:"user_id"`
-	Name   string        `json:"name"`
+	UserID uuid.UUID `json:"user_id"`
+	Name   string    `json:"name"`
 }
 
 func (q *Queries) CreateGroup(ctx context.Context, arg CreateGroupParams) (Group, error) {
@@ -69,40 +69,14 @@ func (q *Queries) GetGroup(ctx context.Context, id uuid.UUID) (Group, error) {
 	return i, err
 }
 
-const getGroupByUser = `-- name: GetGroupByUser :one
+const listGroupsByUser = `-- name: ListGroupsByUser :many
 SELECT id, user_id, name, created_at, updated_at
 FROM "Groups" as g
-WHERE g.user_id = $1 
-LIMIT 1
+WHERE user_id = $1
 `
 
-func (q *Queries) GetGroupByUser(ctx context.Context, userID uuid.NullUUID) (Group, error) {
-	row := q.db.QueryRowContext(ctx, getGroupByUser, userID)
-	var i Group
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.Name,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const listGroups = `-- name: ListGroups :many
-SELECT id, user_id, name, created_at, updated_at
-FROM "Groups" as g
-LIMIT $1
-OFFSET $2
-`
-
-type ListGroupsParams struct {
-	Limit  int32 `json:"limit"`
-	Offset int32 `json:"offset"`
-}
-
-func (q *Queries) ListGroups(ctx context.Context, arg ListGroupsParams) ([]Group, error) {
-	rows, err := q.db.QueryContext(ctx, listGroups, arg.Limit, arg.Offset)
+func (q *Queries) ListGroupsByUser(ctx context.Context, userID uuid.UUID) ([]Group, error) {
+	rows, err := q.db.QueryContext(ctx, listGroupsByUser, userID)
 	if err != nil {
 		return nil, err
 	}

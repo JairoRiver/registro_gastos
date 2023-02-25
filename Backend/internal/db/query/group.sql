@@ -12,17 +12,10 @@ FROM "Groups" AS g
 WHERE g.id = $1 
 LIMIT 1;
 
--- name: GetGroupByUser :one
+-- name: ListGroupsByUser :many
 SELECT *
 FROM "Groups" as g
-WHERE g.user_id = $1 
-LIMIT 1;
-
--- name: ListGroups :many
-SELECT *
-FROM "Groups" as g
-LIMIT $1
-OFFSET $2;
+WHERE user_id = $1;
 
 -- name: DeleteGroup :exec
 DELETE FROM "Groups"

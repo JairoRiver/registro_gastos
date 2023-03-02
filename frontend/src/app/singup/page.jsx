@@ -53,12 +53,12 @@ export default function Login() {
     }
 
     return (
-        <section>
+        <section className={styles.section}>
             <div>
                 <h2>Sign up</h2>
             </div>
-            <div>
-                <form onSubmit={handleSubmit} className={styles.from}>
+            <div className={styles.form_container}>
+                <form onSubmit={handleSubmit} className={styles.formColumn}>
                     <label htmlFor="username">Username</label>
                     <input type="text" id="username" name="username" required />
 

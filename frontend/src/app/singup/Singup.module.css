@@ -1,4 +1,20 @@
-.form {
+.formColumn {
     display: flex;
     flex-direction: column;
+}
+
+.form_container {
+    max-width: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 100vw;
+}
+
+.section{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-height: 100vw;
 }

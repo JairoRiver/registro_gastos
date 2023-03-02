@@ -30,7 +30,7 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 		tokenMaker: tokenMaker,
 	}
 
-	server.setupRouter()
+	server.setupRouter(config.FrontEndDomain)
 	return &server, nil
 }
 

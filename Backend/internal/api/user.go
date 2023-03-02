@@ -14,7 +14,7 @@ import (
 
 // createUser handler
 type createUserRequest struct {
-	Username string `json:"username" binding:"required,alphanum"`
+	Username string `json:"username" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
 }
@@ -133,7 +133,7 @@ func (server *Server) listUsers(ctx *gin.Context) {
 
 // update user handler
 type updateUserRequestData struct {
-	Username string `json:"username" binding:"omitempty,alphanum"`
+	Username string `json:"username" binding:"omitempty"`
 	Email    string `json:"email" binding:"omitempty,email"`
 	Password string `json:"password" binding:"omitempty"`
 }

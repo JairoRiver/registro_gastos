@@ -1,11 +1,17 @@
 package api
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
-func (server *Server) setupRouter() {
+func (server *Server) setupRouter(frontendUrl string) {
 	router := gin.Default()
+
+	// Allow CORS policy
+	configCors := cors.DefaultConfig()
+	configCors.AllowOrigins = []string{frontendUrl}
+	router.Use(cors.New(configCors))
 
 	authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
 
